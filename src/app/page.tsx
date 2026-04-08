@@ -63,11 +63,11 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button size="lg" className="gap-2 w-full sm:w-auto" render={<Link href="/projects" />}>
+            <Button size="lg" className="gap-2 w-full sm:w-auto" render={<Link href="/projects" />} nativeButton={false}>
               开始创作
               <ArrowRight className="size-4" />
             </Button>
-            <Button size="lg" variant="outline" className="w-full sm:w-auto" render={<Link href="/projects" />}>
+            <Button size="lg" variant="outline" className="w-full sm:w-auto" render={<Link href="/projects" />} nativeButton={false}>
               查看作品
             </Button>
           </div>

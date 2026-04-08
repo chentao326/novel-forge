@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useProjectStore } from "@/stores/project-store";
 import { useChapterStore } from "@/stores/chapter-store";
 import { TipTapEditor } from "@/components/writing/editor";
@@ -26,10 +26,13 @@ export default function WritingPage() {
   const currentProject = useProjectStore((s) => s.getCurrentProject());
   const currentChapter = useChapterStore((s) => s.getCurrentChapter());
   const updateChapter = useChapterStore((s) => s.updateChapter);
-  const chapters = useChapterStore((s) =>
+  const allChapters = useChapterStore((s) => s.chapters);
+
+  const chapters = useMemo(() =>
     currentProjectId
-      ? s.chapters.filter((c) => c.project_id === currentProjectId)
-      : []
+      ? allChapters.filter((c) => c.project_id === currentProjectId)
+      : [],
+    [allChapters, currentProjectId]
   );
 
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);

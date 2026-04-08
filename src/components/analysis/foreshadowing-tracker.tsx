@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useMemo } from "react";
 import { useForeshadowingStore } from "@/stores/foreshadowing-store";
 import { useChapterStore } from "@/stores/chapter-store";
 import { useProjectStore } from "@/stores/project-store";
@@ -26,20 +26,25 @@ import {
 } from "@/components/ui/select";
 import { Plus, Check, X, Sparkles, Loader2, Search, Eye, EyeOff } from "lucide-react";
 import type { ForeshadowingItem } from "@/stores/foreshadowing-store";
+import { generateId } from "@/lib/utils";
 
 type FilterType = "all" | "planted" | "resolved" | "unresolved";
 
 export function ForeshadowingTracker() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
-  const chapters = useChapterStore((s) =>
+  const allChapters = useChapterStore((s) => s.chapters);
+  const chapters = useMemo(() =>
     currentProjectId
-      ? s.chapters.filter((c) => c.project_id === currentProjectId)
-      : []
+      ? allChapters.filter((c) => c.project_id === currentProjectId)
+      : [],
+    [allChapters, currentProjectId]
   );
-  const items = useForeshadowingStore((s) =>
+  const allItems = useForeshadowingStore((s) => s.items);
+  const items = useMemo(() =>
     currentProjectId
-      ? s.items.filter((i) => i.project_id === currentProjectId)
-      : []
+      ? allItems.filter((i) => i.project_id === currentProjectId)
+      : [],
+    [allItems, currentProjectId]
   );
   const addItem = useForeshadowingStore((s) => s.addItem);
   const updateItem = useForeshadowingStore((s) => s.updateItem);
@@ -96,7 +101,7 @@ export function ForeshadowingTracker() {
       });
     } else {
       addItem({
-        id: crypto.randomUUID(),
+        id: generateId(),
         project_id: currentProjectId,
         chapter_id: formChapterId || null,
         description: formDescription.trim(),

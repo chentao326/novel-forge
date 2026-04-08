@@ -41,10 +41,12 @@ type ExportFormat = "txt" | "markdown" | "html" | "epub";
 export function ExportDialog({ open, onOpenChange }: ExportDialogProps) {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
   const currentProject = useProjectStore((s) => s.getCurrentProject());
-  const chapters = useChapterStore((s) =>
+  const allChapters = useChapterStore((s) => s.chapters);
+  const chapters = useMemo(() =>
     currentProjectId
-      ? s.chapters.filter((c) => c.project_id === currentProjectId)
-      : []
+      ? allChapters.filter((c) => c.project_id === currentProjectId)
+      : [],
+    [allChapters, currentProjectId]
   );
 
   const [format, setFormat] = useState<ExportFormat>("txt");

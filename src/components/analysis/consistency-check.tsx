@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useMemo } from "react";
 import { useChapterStore } from "@/stores/chapter-store";
 import { useCharacterStore } from "@/stores/character-store";
 import { useWorldStore } from "@/stores/world-store";
@@ -49,20 +49,26 @@ interface CategoryResult {
 
 export function ConsistencyCheck() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
-  const chapters = useChapterStore((s) =>
+  const allChapters = useChapterStore((s) => s.chapters);
+  const chapters = useMemo(() =>
     currentProjectId
-      ? s.chapters.filter((c) => c.project_id === currentProjectId)
-      : []
+      ? allChapters.filter((c) => c.project_id === currentProjectId)
+      : [],
+    [allChapters, currentProjectId]
   );
-  const characters = useCharacterStore((s) =>
+  const allCharacters = useCharacterStore((s) => s.characters);
+  const characters = useMemo(() =>
     currentProjectId
-      ? s.characters.filter((c) => c.project_id === currentProjectId)
-      : []
+      ? allCharacters.filter((c) => c.project_id === currentProjectId)
+      : [],
+    [allCharacters, currentProjectId]
   );
-  const worldSettings = useWorldStore((s) =>
+  const allWorldSettings = useWorldStore((s) => s.settings);
+  const worldSettings = useMemo(() =>
     currentProjectId
-      ? s.settings.filter((s) => s.project_id === currentProjectId)
-      : []
+      ? allWorldSettings.filter((s) => s.project_id === currentProjectId)
+      : [],
+    [allWorldSettings, currentProjectId]
   );
 
   const [categories, setCategories] = useState<CategoryResult[]>([

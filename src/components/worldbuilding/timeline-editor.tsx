@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useWorldStore } from "@/stores/world-store";
 import { useProjectStore } from "@/stores/project-store";
+import { generateId } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -60,7 +61,7 @@ export const EVENT_CATEGORY_CONFIG: Record<
 
 function createEmptyEvent(): TimelineEvent {
   return {
-    id: crypto.randomUUID(),
+    id: generateId(),
     date_label: "",
     title: "",
     description: "",
@@ -73,10 +74,12 @@ function createEmptyEvent(): TimelineEvent {
 export function TimelineEditor() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
   const addSetting = useWorldStore((s) => s.addSetting);
-  const projectSettings = useWorldStore((s) =>
+  const allSettingsData = useWorldStore((s) => s.settings);
+  const projectSettings = useMemo(() =>
     currentProjectId
-      ? s.settings.filter((s) => s.project_id === currentProjectId)
-      : []
+      ? allSettingsData.filter((s) => s.project_id === currentProjectId)
+      : [],
+    [allSettingsData, currentProjectId]
   );
 
   const [events, setEvents] = useState<TimelineEvent[]>([]);
@@ -154,7 +157,7 @@ export function TimelineEditor() {
           (c) => c === parts[3]?.toLowerCase()
         ) as EventCategory;
         return {
-          id: crypto.randomUUID(),
+          id: generateId(),
           date_label: parts[0] || "",
           title: parts[1] || "",
           description: parts[2] || "",
@@ -188,7 +191,7 @@ export function TimelineEditor() {
 
     const now = new Date().toISOString();
     addSetting({
-      id: crypto.randomUUID(),
+      id: generateId(),
       project_id: currentProjectId,
       name: "世界时间线",
       category: "history",

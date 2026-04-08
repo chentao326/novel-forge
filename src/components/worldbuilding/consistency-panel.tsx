@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useWorldStore } from "@/stores/world-store";
 import { useProjectStore } from "@/stores/project-store";
 import { Button } from "@/components/ui/button";
@@ -56,10 +56,12 @@ const SEVERITY_CONFIG: Record<
 
 export function ConsistencyPanel() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
-  const projectSettings = useWorldStore((s) =>
+  const allSettingsData = useWorldStore((s) => s.settings);
+  const projectSettings = useMemo(() =>
     currentProjectId
-      ? s.settings.filter((s) => s.project_id === currentProjectId)
-      : []
+      ? allSettingsData.filter((s) => s.project_id === currentProjectId)
+      : [],
+    [allSettingsData, currentProjectId]
   );
 
   const [isChecking, setIsChecking] = useState(false);

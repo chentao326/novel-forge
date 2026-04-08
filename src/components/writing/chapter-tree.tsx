@@ -33,7 +33,7 @@ import {
 } from "lucide-react";
 import { CHAPTER_STATUS_LABELS } from "@/lib/types";
 import type { ChapterStatus, Volume, Chapter } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, generateId } from "@/lib/utils";
 
 export function ChapterTree() {
   const {
@@ -112,7 +112,7 @@ export function ChapterTree() {
   const handleAddVolume = () => {
     if (!currentProjectId) return;
     const newVolume: Volume = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       project_id: currentProjectId,
       title: `卷 ${projectVolumes.length + 1}`,
       sort_order: projectVolumes.length,
@@ -125,7 +125,7 @@ export function ChapterTree() {
     if (!currentProjectId) return;
     const existing = getChaptersByVolume(volumeId);
     const newChapter: Chapter = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       project_id: currentProjectId,
       volume_id: volumeId,
       title: `第 ${existing.length + 1} 章`,

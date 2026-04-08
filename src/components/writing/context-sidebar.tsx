@@ -31,11 +31,15 @@ interface ContextSidebarProps {
 
 export function ContextSidebar({ onInsertReference }: ContextSidebarProps) {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
-  const characters = useCharacterStore((s) =>
-    currentProjectId ? s.characters.filter((c) => c.project_id === currentProjectId) : []
+  const allCharacters = useCharacterStore((s) => s.characters);
+  const characters = useMemo(() =>
+    currentProjectId ? allCharacters.filter((c) => c.project_id === currentProjectId) : [],
+    [allCharacters, currentProjectId]
   );
-  const settings = useWorldStore((s) =>
-    currentProjectId ? s.settings.filter((s) => s.project_id === currentProjectId) : []
+  const allSettingsData = useWorldStore((s) => s.settings);
+  const settings = useMemo(() =>
+    currentProjectId ? allSettingsData.filter((s) => s.project_id === currentProjectId) : [],
+    [allSettingsData, currentProjectId]
   );
 
   const [searchQuery, setSearchQuery] = useState("");

@@ -153,10 +153,12 @@ function analyzeText(text: string): AnalysisResult {
 
 export function StyleAnalyzer() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
-  const chapters = useChapterStore((s) =>
+  const allChapters = useChapterStore((s) => s.chapters);
+  const chapters = useMemo(() =>
     currentProjectId
-      ? s.chapters.filter((c) => c.project_id === currentProjectId)
-      : []
+      ? allChapters.filter((c) => c.project_id === currentProjectId)
+      : [],
+    [allChapters, currentProjectId]
   );
 
   const [selectedChapterId, setSelectedChapterId] = useState<string>("all");

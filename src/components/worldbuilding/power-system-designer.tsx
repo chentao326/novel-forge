@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useWorldStore } from "@/stores/world-store";
 import { useProjectStore } from "@/stores/project-store";
+import { generateId } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -147,7 +148,7 @@ function TierEditor({
 }) {
   const handleAdd = () => {
     const newTier: Tier = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       name: "",
       description: "",
     };
@@ -213,10 +214,12 @@ export function PowerSystemDesigner() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
   const addSetting = useWorldStore((s) => s.addSetting);
   const updateSetting = useWorldStore((s) => s.updateSetting);
-  const projectSettings = useWorldStore((s) =>
+  const allSettingsData = useWorldStore((s) => s.settings);
+  const projectSettings = useMemo(() =>
     currentProjectId
-      ? s.settings.filter((s) => s.project_id === currentProjectId)
-      : []
+      ? allSettingsData.filter((s) => s.project_id === currentProjectId)
+      : [],
+    [allSettingsData, currentProjectId]
   );
 
   const [data, setData] = useState<PowerSystemData>(createEmptyData());
@@ -234,7 +237,7 @@ export function PowerSystemDesigner() {
     setData((prev) => ({
       ...prev,
       name: prev.name || "修炼体系",
-      tiers: XIAXIA_TIERS.map((t) => ({ ...t, id: crypto.randomUUID() })),
+      tiers: XIAXIA_TIERS.map((t) => ({ ...t, id: generateId() })),
     }));
   };
 
@@ -307,7 +310,7 @@ export function PowerSystemDesigner() {
     if (savedId) {
       updateSetting(savedId, { name: data.name.trim(), content, rules });
     } else {
-      const id = crypto.randomUUID();
+      const id = generateId();
       addSetting({
         id,
         project_id: currentProjectId,

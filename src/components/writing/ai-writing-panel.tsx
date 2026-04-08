@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import type { RewriteMode, ChatMessage } from "@/lib/types";
 import { REWRITE_MODE_LABELS } from "@/lib/types";
+import { generateId } from "@/lib/utils";
 
 interface AIWritingPanelProps {
   chapterId?: string;
@@ -148,7 +149,7 @@ export function AIWritingPanel({
     if (!chatInput.trim()) return;
 
     const userMessage: ChatMessage = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       role: "user",
       content: chatInput.trim(),
       timestamp: new Date().toISOString(),
@@ -199,7 +200,7 @@ export function AIWritingPanel({
           return [
             ...prev,
             {
-              id: crypto.randomUUID(),
+              id: generateId(),
               role: "assistant" as const,
               content: assistantContent,
               timestamp: "",
@@ -224,7 +225,7 @@ export function AIWritingPanel({
       setChatMessages((prev) => [
         ...prev,
         {
-          id: crypto.randomUUID(),
+          id: generateId(),
           role: "assistant",
           content: "抱歉，对话出现错误，请重试。",
           timestamp: new Date().toISOString(),

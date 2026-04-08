@@ -25,10 +25,13 @@ const CATEGORY_FILTERS: Array<{ value: WorldCategory | "all"; label: string }> =
 export default function WorldBuildingPage() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
   const currentProject = useProjectStore((s) => s.getCurrentProject());
-  const settings = useWorldStore((s) =>
-    currentProjectId ? s.settings.filter((s) => s.project_id === currentProjectId) : []
-  );
+  const allSettings = useWorldStore((s) => s.settings);
   const getChildSettings = useWorldStore((s) => s.getChildSettings);
+
+  const settings = useMemo(() =>
+    currentProjectId ? allSettings.filter((s) => s.project_id === currentProjectId) : [],
+    [allSettings, currentProjectId]
+  );
 
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<WorldCategory | "all">("all");

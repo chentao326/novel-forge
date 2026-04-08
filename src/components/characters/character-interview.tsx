@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useCharacterStore } from "@/stores/character-store";
 import { useProjectStore } from "@/stores/project-store";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Send, Save, Sparkles, MessageCircle, Loader2, User } from "lucide-react";
 import type { Character } from "@/lib/types";
+import { generateId } from "@/lib/utils";
 
 interface InterviewMessage {
   id: string;
@@ -35,10 +36,12 @@ const SUGGESTED_QUESTIONS = [
 
 export function CharacterInterview() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
-  const characters = useCharacterStore((s) =>
+  const allCharacters = useCharacterStore((s) => s.characters);
+  const characters = useMemo(() =>
     currentProjectId
-      ? s.characters.filter((c) => c.project_id === currentProjectId)
-      : []
+      ? allCharacters.filter((c) => c.project_id === currentProjectId)
+      : [],
+    [allCharacters, currentProjectId]
   );
   const updateCharacter = useCharacterStore((s) => s.updateCharacter);
 
@@ -101,7 +104,7 @@ export function CharacterInterview() {
       if (!question.trim() || !selectedCharacter || isStreaming) return;
 
       const userMessage: InterviewMessage = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         role: "user",
         content: question.trim(),
         timestamp: new Date().toISOString(),
@@ -111,7 +114,7 @@ export function CharacterInterview() {
       setIsStreaming(true);
 
       const assistantMessage: InterviewMessage = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         role: "assistant",
         content: "",
         timestamp: new Date().toISOString(),

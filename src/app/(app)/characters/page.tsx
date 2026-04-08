@@ -16,10 +16,13 @@ import type { Character } from "@/lib/types";
 export default function CharactersPage() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
   const currentProject = useProjectStore((s) => s.getCurrentProject());
-  const characters = useCharacterStore((s) =>
+  const allCharacters = useCharacterStore((s) => s.characters);
+
+  const characters = useMemo(() =>
     currentProjectId
-      ? s.characters.filter((c) => c.project_id === currentProjectId)
-      : []
+      ? allCharacters.filter((c) => c.project_id === currentProjectId)
+      : [],
+    [allCharacters, currentProjectId]
   );
 
   const [searchQuery, setSearchQuery] = useState("");

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useWorldStore } from "@/stores/world-store";
 import { useProjectStore } from "@/stores/project-store";
 import { ALL_LAYERS } from "@/lib/worldbuilding/layer-templates";
 import type { LayerTemplate, LayerField } from "@/lib/worldbuilding/layer-templates";
+import { generateId } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,10 +34,12 @@ const LAYER_ICONS: Record<string, React.ElementType> = {
 export function LayerBuilder() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
   const addSetting = useWorldStore((s) => s.addSetting);
-  const projectSettings = useWorldStore((s) =>
+  const allSettingsData = useWorldStore((s) => s.settings);
+  const projectSettings = useMemo(() =>
     currentProjectId
-      ? s.settings.filter((s) => s.project_id === currentProjectId)
-      : []
+      ? allSettingsData.filter((s) => s.project_id === currentProjectId)
+      : [],
+    [allSettingsData, currentProjectId]
   );
 
   const [expandedLayer, setExpandedLayer] = useState<string | null>("physical");
@@ -107,7 +110,7 @@ export function LayerBuilder() {
 
     const now = new Date().toISOString();
     addSetting({
-      id: crypto.randomUUID(),
+      id: generateId(),
       project_id: currentProjectId,
       name: layer.name,
       category: "culture",

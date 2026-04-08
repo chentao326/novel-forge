@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useWorldStore } from "@/stores/world-store";
 import { useProjectStore } from "@/stores/project-store";
 import {
@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { WORLD_CATEGORY_LABELS } from "@/lib/types";
 import type { WorldSetting, WorldCategory } from "@/lib/types";
+import { generateId } from "@/lib/utils";
 import { Sparkles, Plus, X, Loader2, ShieldCheck } from "lucide-react";
 
 interface SettingEditorProps {
@@ -27,8 +28,10 @@ export function SettingEditor({ setting, open, onOpenChange }: SettingEditorProp
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
   const addSetting = useWorldStore((s) => s.addSetting);
   const updateSetting = useWorldStore((s) => s.updateSetting);
-  const allSettings = useWorldStore((s) =>
-    currentProjectId ? s.settings.filter((s) => s.project_id === currentProjectId) : []
+  const allSettingsData = useWorldStore((s) => s.settings);
+  const allSettings = useMemo(() =>
+    currentProjectId ? allSettingsData.filter((s) => s.project_id === currentProjectId) : [],
+    [allSettingsData, currentProjectId]
   );
   const isNew = !setting;
 
@@ -95,7 +98,7 @@ export function SettingEditor({ setting, open, onOpenChange }: SettingEditorProp
     if (!name.trim() || !currentProjectId) return;
     const now = new Date().toISOString();
     if (isNew) {
-      addSetting({ id: crypto.randomUUID(), project_id: currentProjectId, name: name.trim(), category, parent_id: parentId, content, rules, created_at: now, updated_at: now });
+      addSetting({ id: generateId(), project_id: currentProjectId, name: name.trim(), category, parent_id: parentId, content, rules, created_at: now, updated_at: now });
     } else if (setting) {
       updateSetting(setting.id, { name: name.trim(), category, parent_id: parentId, content, rules });
     }

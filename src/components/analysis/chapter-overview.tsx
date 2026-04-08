@@ -91,10 +91,12 @@ interface ChapterRow {
 export function ChapterOverview() {
   const router = useRouter();
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
-  const chapters = useChapterStore((s) =>
+  const allChapters = useChapterStore((s) => s.chapters);
+  const chapters = useMemo(() =>
     currentProjectId
-      ? s.chapters.filter((c) => c.project_id === currentProjectId)
-      : []
+      ? allChapters.filter((c) => c.project_id === currentProjectId)
+      : [],
+    [allChapters, currentProjectId]
   );
 
   const [sortKey, setSortKey] = useState<SortKey>("sort_order");

@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Edit2, Network } from "lucide-react";
 import { CHARACTER_ROLE_LABELS } from "@/lib/types";
 import type { Character, CharacterRole } from "@/lib/types";
+import { generateId } from "@/lib/utils";
 
 // Relationship types
 const RELATIONSHIP_TYPES = [
@@ -76,15 +77,19 @@ interface NodePosition {
 
 export function RelationshipGraph() {
   const currentProjectId = useProjectStore((s) => s.currentProjectId);
-  const characters = useCharacterStore((s) =>
+  const allCharacters = useCharacterStore((s) => s.characters);
+  const characters = useMemo(() =>
     currentProjectId
-      ? s.characters.filter((c) => c.project_id === currentProjectId)
-      : []
+      ? allCharacters.filter((c) => c.project_id === currentProjectId)
+      : [],
+    [allCharacters, currentProjectId]
   );
-  const relationships = useRelationshipStore((s) =>
+  const allRelationships = useRelationshipStore((s) => s.relationships);
+  const relationships = useMemo(() =>
     currentProjectId
-      ? s.relationships.filter((r) => r.project_id === currentProjectId)
-      : []
+      ? allRelationships.filter((r) => r.project_id === currentProjectId)
+      : [],
+    [allRelationships, currentProjectId]
   );
   const addRelationship = useRelationshipStore((s) => s.addRelationship);
   const updateRelationship = useRelationshipStore((s) => s.updateRelationship);
@@ -167,7 +172,7 @@ export function RelationshipGraph() {
       });
     } else {
       addRelationship({
-        id: crypto.randomUUID(),
+        id: generateId(),
         project_id: currentProjectId,
         character_a_id: charAId,
         character_b_id: charBId,

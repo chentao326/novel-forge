@@ -30,6 +30,7 @@ import {
   ARC_TYPE_LABELS,
 } from "@/lib/types";
 import type { Character, CharacterRole, ArcType } from "@/lib/types";
+import { generateId } from "@/lib/utils";
 import {
   Sparkles,
   Plus,
@@ -153,7 +154,7 @@ export function CharacterEditor({ character, open, onOpenChange }: CharacterEdit
     const now = new Date().toISOString();
     if (isNew) {
       addCharacter({
-        id: crypto.randomUUID(), project_id: currentProjectId, name: name.trim(), role, appearance, background,
+        id: generateId(), project_id: currentProjectId, name: name.trim(), role, appearance, background,
         core_wound: coreWound, lie, want, need, fear, armor, personality_traits: personalityTraits,
         speech_style: speechStyle, body_language: bodyLanguage, decision_style: decisionStyle,
         arc_type: arcType, arc_description: arcDescription, turning_points: turningPoints,

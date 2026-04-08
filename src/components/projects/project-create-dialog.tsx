@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { GENRE_LABELS } from "@/lib/types";
 import type { Genre } from "@/lib/types";
+import { generateId } from "@/lib/utils";
 
 interface ProjectCreateDialogProps {
   open: boolean;
@@ -52,7 +53,7 @@ export function ProjectCreateDialog({
       const store = useProjectStore.getState();
 
       const newProject = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         title: title.trim(),
         genre,
         description,
